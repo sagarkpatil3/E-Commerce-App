@@ -38,7 +38,19 @@ export const ProductsProvider = ({ children }) => {
     }
   };
 
-  const value = { products, searchProducts };
+  const getProductsFromCategory = async (query) => {
+    try {
+      const response = await axios.get(`https://dummyjson.com/products/category/${query}`);
+      if (response.data && response.data.products) {
+        setProducts(response.data.products);
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  const value = { products, searchProducts, getProductsFromCategory};
 
   return (
     <ProductsContext.Provider value={value}>
