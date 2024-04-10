@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/cart.context';
 
@@ -7,15 +7,30 @@ import CartItem from '../cart-item/cart-item.component';
 import './shopping-cart-dropdown.styles.scss';
 
 const CartDropdown = () => {
-    const { cartItems } = useContext(CartContext);
+    const { cartItems, setIsCartOpen } = useContext(CartContext);
     const navigate = useNavigate();
+    const cartRef = useRef(null);
 
     const goToCheckoutHandler = () =>{
         navigate('/checkout')
     }
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (cartRef.current && !cartRef.current.contains(event.target)) {
+              setIsCartOpen(false);
+            }
+          };
+      
+          document.addEventListener('click', handleClickOutside);
+      
+          return () => {
+            document.removeEventListener('click', handleClickOutside);
+          };
+    }, [setIsCartOpen])
+
     return (
-      <div className='cart-dropdown-container'>
+      <div ref={cartRef} className='cart-dropdown-container'>
         <div className='cart-items'>
           {cartItems.length ? (
             cartItems.map((cartItem) => (
